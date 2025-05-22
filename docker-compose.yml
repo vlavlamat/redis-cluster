@@ -1,0 +1,164 @@
+services:
+  redis-node1:
+    image: redis:7.2-alpine
+    command: >
+      redis-server --cluster-enabled yes
+                   --cluster-config-file nodes.conf
+                   --cluster-node-timeout 5000
+                   --appendonly yes
+                   --cluster-announce-ip redis-node1
+                   --cluster-announce-port 6379
+                   --cluster-announce-bus-port 16379
+                   --maxmemory 2gb
+                   --maxmemory-policy allkeys-lru
+    ports: [ "7001:6379" ]
+    volumes: [ "./data/redis-node1:/data" ]
+    networks: [ redis-cluster-net ]
+
+  redis-node2:
+    image: redis:7.2-alpine
+    command: >
+      redis-server --cluster-enabled yes
+                   --cluster-config-file nodes.conf
+                   --cluster-node-timeout 5000
+                   --appendonly yes
+                   --cluster-announce-ip redis-node2
+                   --cluster-announce-port 6379
+                   --cluster-announce-bus-port 16379
+                   --maxmemory 2gb
+                   --maxmemory-policy allkeys-lru
+    ports: [ "7002:6379" ]
+    volumes: [ "./data/redis-node2:/data" ]
+    networks: [ redis-cluster-net ]
+
+  redis-node3:
+    image: redis:7.2-alpine
+    command: >
+      redis-server --cluster-enabled yes
+                   --cluster-config-file nodes.conf
+                   --cluster-node-timeout 5000
+                   --appendonly yes
+                   --cluster-announce-ip redis-node3
+                   --cluster-announce-port 6379
+                   --cluster-announce-bus-port 16379
+                   --maxmemory 2gb
+                   --maxmemory-policy allkeys-lru
+    ports: [ "7003:6379" ]
+    volumes: [ "./data/redis-node3:/data" ]
+    networks: [ redis-cluster-net ]
+
+  redis-node4:
+    image: redis:7.2-alpine
+    command: >
+      redis-server --cluster-enabled yes
+                   --cluster-config-file nodes.conf
+                   --cluster-node-timeout 5000
+                   --appendonly yes
+                   --cluster-announce-ip redis-node4
+                   --cluster-announce-port 6379
+                   --cluster-announce-bus-port 16379
+                   --maxmemory 2gb
+                   --maxmemory-policy allkeys-lru
+    ports: [ "7004:6379" ]
+    volumes: [ "./data/redis-node4:/data" ]
+    networks: [ redis-cluster-net ]
+
+  redis-node5:
+    image: redis:7.2-alpine
+    command: >
+      redis-server --cluster-enabled yes
+                   --cluster-config-file nodes.conf
+                   --cluster-node-timeout 5000
+                   --appendonly yes
+                   --cluster-announce-ip redis-node5
+                   --cluster-announce-port 6379
+                   --cluster-announce-bus-port 16379
+                   --maxmemory 2gb
+                   --maxmemory-policy allkeys-lru
+    ports: [ "7005:6379" ]
+    volumes: [ "./data/redis-node5:/data" ]
+    networks: [ redis-cluster-net ]
+
+  redis-node6:
+    image: redis:7.2-alpine
+    command: >
+      redis-server --cluster-enabled yes
+                   --cluster-config-file nodes.conf
+                   --cluster-node-timeout 5000
+                   --appendonly yes
+                   --cluster-announce-ip redis-node6
+                   --cluster-announce-port 6379
+                   --cluster-announce-bus-port 16379
+                   --maxmemory 2gb
+                   --maxmemory-policy allkeys-lru
+    ports: [ "7006:6379" ]
+    volumes: [ "./data/redis-node6:/data" ]
+    networks: [ redis-cluster-net ]
+
+  redis-node7:
+    image: redis:7.2-alpine
+    command: >
+      redis-server --cluster-enabled yes
+                   --cluster-config-file nodes.conf
+                   --cluster-node-timeout 5000
+                   --appendonly yes
+                   --cluster-announce-ip redis-node7
+                   --cluster-announce-port 6379
+                   --cluster-announce-bus-port 16379
+                   --maxmemory 2gb
+                   --maxmemory-policy allkeys-lru
+    ports: [ "7007:6379" ]
+    volumes: [ "./data/redis-node7:/data" ]
+    networks: [ redis-cluster-net ]
+
+  redis-node8:
+    image: redis:7.2-alpine
+    command: >
+      redis-server --cluster-enabled yes
+                   --cluster-config-file nodes.conf
+                   --cluster-node-timeout 5000
+                   --appendonly yes
+                   --cluster-announce-ip redis-node8
+                   --cluster-announce-port 6379
+                   --cluster-announce-bus-port 16379
+                   --maxmemory 2gb
+                   --maxmemory-policy allkeys-lru
+    ports: [ "7008:6379" ]
+    volumes: [ "./data/redis-node8:/data" ]
+    networks: [ redis-cluster-net ]
+
+  redis-node9:
+    image: redis:7.2-alpine
+    command: >
+      redis-server --cluster-enabled yes
+                   --cluster-config-file nodes.conf
+                   --cluster-node-timeout 5000
+                   --appendonly yes
+                   --cluster-announce-ip redis-node9
+                   --cluster-announce-port 6379
+                   --cluster-announce-bus-port 16379
+                   --maxmemory 2gb
+                   --maxmemory-policy allkeys-lru
+    ports: [ "7009:6379" ]
+    volumes: [ "./data/redis-node9:/data" ]
+    networks: [ redis-cluster-net ]
+
+  redis-node10:
+    image: redis:7.2-alpine
+    command: >
+      redis-server --cluster-enabled yes
+                   --cluster-config-file nodes.conf
+                   --cluster-node-timeout 5000
+                   --appendonly yes
+                   --cluster-announce-ip redis-node10
+                   --cluster-announce-port 6379
+                   --cluster-announce-bus-port 16379
+                   --maxmemory 2gb
+                   --maxmemory-policy allkeys-lru
+    ports: [ "7010:6379" ]
+    volumes: [ "./data/redis-node10:/data" ]
+    networks: [ redis-cluster-net ]
+
+networks:
+  redis-cluster-net:
+    name: redis-cluster-net
