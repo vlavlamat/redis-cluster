@@ -21,3 +21,14 @@
 # Windows
 Thumbs.db
 desktop.ini
+
+# Redis cluster data
+/data/redis-node*/dump.rdb
+/data/redis-node*/appendonlydir/
+/data/redis-node*/nodes.conf
+
+# Общие данные Redis (если вдруг появятся)
+appendonly.aof
+*.rdb
+*.aof
+nodes.conf
