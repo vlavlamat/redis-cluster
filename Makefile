@@ -54,7 +54,11 @@ up:
 	@docker network inspect $(NETWORK_NAME) >/dev/null 2>&1 || make network-create
 	@docker compose -f $(COMPOSE_FILE) up -d
 	@echo "Контейнеры запущены!"
-	@echo "Выполните 'make create-cluster' для инициализации кластера"
+	@if [ ! -f ./data/redis-node1/nodes.conf ]; then \
+		echo "ПЕРВЫЙ ЗАПУСК: Выполните 'make create-cluster' для инициализации кластера"; \
+	else \
+		echo "Кластер уже настроен. Используйте 'make check-cluster' для проверки состояния"; \
+	fi
 
 # Остановка контейнеров
 down:
