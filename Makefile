@@ -16,8 +16,8 @@ help:
 	@echo "Redis Cluster - Доступные команды:"
 	@echo ""
 	@echo "Управление контейнерами:"
-	@echo "  make up              - Запустить все Redis ноды"
-	@echo "  make down            - Остановить все контейнеры"
+	@echo "  make up              - Создать сеть и запустить все Redis ноды"
+	@echo "  make down            - Остановить контейнеры и удалить сеть"
 	@echo "  make restart         - Перезапустить все контейнеры"
 	@echo "  make status          - Показать статус контейнеров"
 	@echo "  make logs            - Показать логи всех контейнеров"
@@ -40,9 +40,7 @@ help:
 	@echo "  make restore         - Восстановить данные из бэкапа"
 	@echo "  make clean           - Очистить данные и volumes"
 	@echo ""
-	@echo "Внешняя сеть:"
-	@echo "  make network-create  - Создать внешнюю Docker сеть"
-	@echo "  make network-remove  - Удалить внешнюю сеть (с подтверждением)"
+	@echo "Сеть:"
 	@echo "  make network-info    - Показать информацию о сети"
 	@echo ""
 	@echo "💡 Подключение приложений к сети:"
@@ -50,8 +48,9 @@ help:
 
 # Запуск контейнеров
 up:
+	@echo "Создание сети $(NETWORK_NAME)..."
+	@docker network create --driver bridge $(NETWORK_NAME) 2>/dev/null || echo "Сеть уже существует"
 	@echo "Запуск Redis контейнеров..."
-	@docker network inspect $(NETWORK_NAME) >/dev/null 2>&1 || make network-create
 	@docker compose -f $(COMPOSE_FILE) up -d
 	@echo "Контейнеры запущены!"
 	@if [ ! -f ./data/redis-node1/nodes.conf ]; then \
@@ -64,7 +63,9 @@ up:
 down:
 	@echo "Остановка Redis контейнеров..."
 	@docker compose -f $(COMPOSE_FILE) down
-	@echo "Контейнеры остановлены!"
+	@echo "Удаление сети $(NETWORK_NAME)..."
+	@docker network rm $(NETWORK_NAME) 2>/dev/null || echo "Сеть уже удалена"
+	@echo "Контейнеры остановлены, сеть удалена!"
 
 # Перезапуск
 restart: down up
@@ -82,7 +83,6 @@ logs:
 # Создание кластера (из скрипта create-cluster.sh)
 create-cluster:
 	@echo "Создание Redis кластера..."
-	@docker network inspect $(NETWORK_NAME) >/dev/null 2>&1 || make network-create
 	@yes yes | docker run -i --rm --net $(NETWORK_NAME) $(REDIS_IMAGE) \
 		redis-cli --cluster create \
 		$(CLUSTER_NODES) \
@@ -103,7 +103,7 @@ info:
 
 # Перераспределение слотов
 reshard:
-	@echo "♻Перераспределение слотов кластера..."
+	@echo "♻️ Перераспределение слотов кластера..."
 	@docker run -it --rm --net $(NETWORK_NAME) $(REDIS_IMAGE) \
 		redis-cli --cluster reshard redis-node1:6379
 
@@ -122,6 +122,8 @@ reset:
 reset-force:
 	@echo "Остановка Redis контейнеров..."
 	@docker compose -f $(COMPOSE_FILE) down -v
+	@echo "Удаление сети..."
+	@docker network rm $(NETWORK_NAME) 2>/dev/null || true
 	@echo "Удаление данных Redis..."
 	@rm -rf $(DATA_DIR)/redis-node*
 	@echo "Запуск контейнеров..."
@@ -168,7 +170,7 @@ remove-node:
 		echo "Получите NODE_ID командой: make info"; \
 		exit 1; \
 	fi
-	@echo "Удаление ноды $(NODE_ID) из кластера..."
+	@echo "➖ Удаление ноды $(NODE_ID) из кластера..."
 	@docker run -it --rm --net $(NETWORK_NAME) $(REDIS_IMAGE) \
 		redis-cli --cluster del-node redis-node1:6379 $(NODE_ID)
 
@@ -194,24 +196,6 @@ restore:
 	@make up
 	@echo "Восстановление завершено!"
 
-# Создание Docker сети
-network-create:
-	@echo "Создание внешней Docker сети $(NETWORK_NAME)..."
-	@docker network create --driver bridge $(NETWORK_NAME) 2>/dev/null || true
-	@echo "Внешняя сеть $(NETWORK_NAME) создана!"
-	@echo "Теперь приложения могут подключаться к этой сети"
-
-# Удаление Docker сети
-network-remove:
-	@echo "ВНИМАНИЕ: Удаление сети $(NETWORK_NAME) отключит ВСЕ приложения!"
-	@read -p "Продолжить? (yes/no): " confirm && \
-	if [ "$$confirm" = "yes" ]; then \
-		docker network rm $(NETWORK_NAME) 2>/dev/null || true; \
-		echo "Сеть удалена!"; \
-	else \
-		echo "Отменено"; \
-	fi
-
 # Показать информацию о сети
 network-info:
 	@echo "Информация о сети $(NETWORK_NAME):"
@@ -234,7 +218,6 @@ clean-all: clean
 	@echo "Полная очистка (включая Docker образы)..."
 	@docker image rm $(REDIS_IMAGE) 2>/dev/null || true
 	@docker system prune -af --volumes
-	@make network-remove
 	@echo "Полная очистка завершена!"
 
 # Показать конфигурацию
