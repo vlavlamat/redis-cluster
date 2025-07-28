@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "🚀 Creating Redis cluster..."
+echo "Creating Redis cluster..."
 
 yes yes | docker run -i --rm --net redis-cluster-net redis:7.2-alpine \
   redis-cli --cluster create \
@@ -16,4 +16,4 @@ yes yes | docker run -i --rm --net redis-cluster-net redis:7.2-alpine \
   redis-node10:6379 \
   --cluster-replicas 1
 
-echo "✅ Done!"
+echo "Done!"
